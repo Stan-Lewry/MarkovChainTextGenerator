@@ -1,33 +1,107 @@
-import javax.xml.soap.Text;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TextGenerator {
 
-    private String outputString;
+    private ArrayList<String> outputString;
     private int stringLength;
     private ArrayList<String> corpus;
 
     public TextGenerator(){
         // Constructor, currently does nothing.
+        corpus = new ArrayList<>();
+        outputString = new ArrayList<>();
+        stringLength = 10;
     }
 
-    public void buildCorpus(String filePath){
-        // read a file from the given file path and construct an array list of strings to be used as the corpus of the Markov chain
+    public void BuildCorpus(String filePath){
+
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("testCorpus.txt"));
+            String line;
+
+            System.out.println("Building the corpus");
+
+            try{
+                while((line = br.readLine()) != null){
+
+                    //maybe think of a more elegant way to do this.
+
+                    String[] splittedString = line.split("\\s+");
+
+
+                    for(String newString : splittedString){
+                        corpus.add(newString);
+                    }
+                    //corpus.addAll(splittedString);
+                }
+            }catch(IOException ioException){
+
+                System.out.println(ioException.getMessage());
+            }
+
+
+        }catch(FileNotFoundException e){
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
+    public void setOutputStringLength(int stringLength){
+        stringLength = this.stringLength;
     }
 
     public void GenerateText(){
-        // use a markov chain to generate text from the corpus
+
+        if(outputString.size() == 0){
+            // grab the first two from the corpus
+            // recurse
+            int randomNum = ThreadLocalRandom.current().nextInt(0, corpus.size() - 1);
+            outputString.add(corpus.get(randomNum));
+            outputString.add(corpus.get(randomNum + 1));
+            GenerateText();
+        }
+        else if(outputString.size() < stringLength){
+            // find every word that comes after our two words.
+            // look up first word, if our second word comes after it, grab the word that comes after that word.
+            ArrayList<String> setOfPossibleNextWords = new ArrayList<String>();
+            for(int i = 0; i < corpus.size() - 3; i++){    // IF WE GET INDEX OUT OF BOUNDS, ITS LIKELY CAUSED BY THIS LINE
+                if(corpus.get(i).equals(outputString.get(outputString.size() - 2))){
+                    if(corpus.get(i + 1).equals(outputString.get(outputString.size() - 1))){
+                        setOfPossibleNextWords.add((corpus.get(i + 2)));
+                    }
+                }
+            }
+
+            if(setOfPossibleNextWords.size() > 0){
+                Random ran = new Random();
+                //int randomNum = 0 + (int)(Math.random() * setOfPossibleNextWords.size());
+                int randomNum = ThreadLocalRandom.current().nextInt(0, setOfPossibleNextWords.size());
+                outputString.add(setOfPossibleNextWords.get(randomNum));
+                GenerateText();
+            }
+        }else{
+            return;
+        }
+    }
+
+    public String getOutputString(){
+        String finalString = new String();
+        for(String str : outputString){
+            finalString += str;
+            finalString += " ";
+        }
+        return  finalString;
+    }
+
+    public void PrintCorpus(){
+        System.out.println("Printing the contents of the current corpus...");
+        for(String line : corpus){
+            System.out.println(line);
+        }
     }
 }
-
-/*
-Need to work out how to use version control here
-I've added the remote, need to see how i can login to git
-then i can get on with making commits and pushing etc
-
-A Markov Chain is an example of a Markov Process, which is a process that satisfies the Markov Property.
-The Markov Property specifies a memoryless process, each transition is dependant only on the current state
-and not on previous transitions; "the conditional probability distribution of future states of the process depends only on
-the present state".
-This property makes recursive methods very easy.
- */
