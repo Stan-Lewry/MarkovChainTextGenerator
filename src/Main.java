@@ -1,3 +1,4 @@
+import javax.swing.*;
 
 public class Main {
 
@@ -15,5 +16,7 @@ public class Main {
 
       System.out.println("Generated string:");
       System.out.println(textGenerator.getOutputString());
+
+        ApplicationWindow applicationWindow = new ApplicationWindow();
     }
 }
