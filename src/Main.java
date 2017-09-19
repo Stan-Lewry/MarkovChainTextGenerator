@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+//a comment
+
 public class Main {
 
     //private TextGenerator textGenerator;
