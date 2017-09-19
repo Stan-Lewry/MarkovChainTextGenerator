@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,27 +17,19 @@ public class TextGenerator {
         stringLength = 10;
     }
 
+
+    // This needs testing
     public void BuildCorpus(String filePath){
 
-
         try {
-            BufferedReader br = new BufferedReader(new FileReader("testCorpus.txt"));
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
-
-            System.out.println("Building the corpus");
 
             try{
                 while((line = br.readLine()) != null){
 
-                    //maybe think of a more elegant way to do this.
+                    corpus.addAll(Arrays.asList(line.split("\\s+")));
 
-                    String[] splittedString = line.split("\\s+");
-
-
-                    for(String newString : splittedString){
-                        corpus.add(newString);
-                    }
-                    //corpus.addAll(splittedString);
                 }
             }catch(IOException ioException){
 
@@ -47,8 +40,6 @@ public class TextGenerator {
         }catch(FileNotFoundException e){
             System.out.println(e.getMessage());
         }
-
-
     }
 
     public void setOutputStringLength(int stringLength){
@@ -103,5 +94,9 @@ public class TextGenerator {
         for(String line : corpus){
             System.out.println(line);
         }
+    }
+
+    public ArrayList getCorpus(){
+        return corpus;
     }
 }
