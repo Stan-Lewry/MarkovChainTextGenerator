@@ -21,6 +21,8 @@ public class TextGenerator {
     // This needs testing
     public void BuildCorpus(String filePath){
 
+        ClearCorpus();
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
@@ -40,6 +42,10 @@ public class TextGenerator {
         }catch(FileNotFoundException e){
             System.out.println(e.getMessage());
         }
+    }
+
+    public void ClearCorpus(){
+        corpus = new ArrayList<>();
     }
 
     public void setOutputStringLength(int stringLength){
@@ -96,7 +102,7 @@ public class TextGenerator {
         }
     }
 
-    public ArrayList getCorpus(){
+    public ArrayList<String> getCorpus(){
         return corpus;
     }
 }
